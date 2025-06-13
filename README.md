@@ -13,3 +13,7 @@ If you are developing a production application, we recommend using TypeScript wi
 
 npm create vite@latest
 npx create-vite
+
+rafce
+
+npm install tailwindcss @tailwindcss/vite
