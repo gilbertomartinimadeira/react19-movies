@@ -1,6 +1,7 @@
 import React, { useState , useEffect } from 'react'
 import Search from './components/Search'
 import Spinner from './components/Spinner';
+import MovieCard from './components/MovieCard';
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,7 +69,7 @@ const App = () => {
           </header>
 
           <section className="all-movies">
-            <h2>All Movies</h2>
+            <h2 className='mt-[40px]'>All Movies</h2>
 
           { isLoading ? 
           (
@@ -80,7 +81,7 @@ const App = () => {
           (
             <ul>
               {movieList.map( (m) => (
-                <p className="text-white" key={m.id}>{m.title}</p>
+                <MovieCard key={m.id} movie={m}/>
                 )
               )}
               
