@@ -3,7 +3,11 @@ import Search from './components/Search'
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('I AM BATMAN');
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [movieList, setMovieList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+
   
   const apiKey = import.meta.env.VITE_TMBD_API_KEY;
 
@@ -18,16 +22,27 @@ const App = () => {
   };
     
   const fetchMovies = async () => {
+    setIsLoading(true);
        
     try {    
       const response = await fetch(url, options); 
-      console.log(response);
 
       if(!response.ok){
         throw new Error('Failed to fetch movies.')
       }
       const data = await response.json();
-      console.log(data);
+
+      if(!data.results ) {
+        setErrorMessage(data.Error || 'Failed to fetch movies');
+        setIsLoading(false);
+        setMovieList([]);
+        return;
+      }
+
+
+      //set movie list    
+      setMovieList(data.results || []);
+      
           
     } catch (error) {
       console.log(`Error fetching movies: ${error}`);
