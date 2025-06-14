@@ -1,11 +1,12 @@
 import React, { useState , useEffect } from 'react'
 import Search from './components/Search'
+import Spinner from './components/Spinner';
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useState('I AM BATMAN');
+  const [searchTerm, setSearchTerm] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
   const [movieList, setMovieList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
 
   
@@ -22,8 +23,7 @@ const App = () => {
   };
     
   const fetchMovies = async () => {
-    setIsLoading(true);
-       
+         
     try {    
       const response = await fetch(url, options); 
 
@@ -38,15 +38,15 @@ const App = () => {
         setMovieList([]);
         return;
       }
-
-
-      //set movie list    
+    
       setMovieList(data.results || []);
-      
+      setIsLoading(false);
           
     } catch (error) {
       console.log(`Error fetching movies: ${error}`);
       setErrorMessage(error);
+    } finally {
+      setIsLoading(false);
     }
 
   };
@@ -70,7 +70,23 @@ const App = () => {
           <section className="all-movies">
             <h2>All Movies</h2>
 
-          { errorMessage && <p className="text-red-500">{errorMessage}</p> }
+          { isLoading ? 
+          (
+            <Spinner/>
+          ) : errorMessage ? 
+          ( 
+            <p className="text-red-500">{errorMessage}</p>
+          ):
+          (
+            <ul>
+              {movieList.map( (m) => (
+                <p className="text-white" key={m.id}>{m.title}</p>
+                )
+              )}
+              
+            </ul>
+          )} 
+            
           </section>
               
 
