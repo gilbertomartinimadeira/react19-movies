@@ -2,18 +2,24 @@ import React, { useState , useEffect } from 'react'
 import Search from './components/Search'
 import Spinner from './components/Spinner';
 import MovieCard from './components/MovieCard';
+import { useDebounce } from 'react-use';
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
   const [movieList, setMovieList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+  useDebounce( () => setDebouncedSearchTerm(searchTerm), 500, [searchTerm]);
+  
 
 
   
   const apiKey = import.meta.env.VITE_TMBD_API_KEY;
+  const apiBaseUrl = 'https://api.themoviedb.org/3/';
 
-  const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
+  
 
   const options = {
     method: 'GET',
@@ -23,7 +29,11 @@ const App = () => {
     }
   };
     
-  const fetchMovies = async () => {
+  const fetchMovies = async (query ='') => {
+
+    const url = query 
+  ? `${apiBaseUrl}search/movie?query=${encodeURI(query)}&include_adult=false&language=en-US&page=1`
+  : `${apiBaseUrl}discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc`;
          
     try {    
       const response = await fetch(url, options); 
@@ -53,9 +63,9 @@ const App = () => {
   };
   useEffect( () => {  
     console.log(`Trying to fetch data using key ${apiKey}`);
-    fetchMovies();
+    fetchMovies(debouncedSearchTerm);
     
-  },[]);
+  },[debouncedSearchTerm]);
 
   return (
     <main>
